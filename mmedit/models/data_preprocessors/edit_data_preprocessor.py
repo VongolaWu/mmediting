@@ -215,7 +215,9 @@ class EditDataPreprocessor(BaseDataPreprocessor):
         data['data_samples'] = batch_data_samples
         return data
 
-    def destructor(self, batch_tensor: torch.Tensor):
+    def destructor(self,
+                   batch_tensor: torch.Tensor,
+                   same_de_padding_size=True):
         """Destructor of data processor. Destruct padding, normalization and
         dissolve batch.
 
@@ -225,23 +227,43 @@ class EditDataPreprocessor(BaseDataPreprocessor):
         Returns:
             Tensor: Destructed output.
         """
-
         # De-normalization
         batch_tensor = batch_tensor * self.outputs_std + self.outputs_mean
 
-        # Do not dissolve batch,
-        # all tensor will be de-padded by a same size
-        # De pad by the first sample
-        padded_h, padded_w = self.padded_sizes[0][-2:]
-        padded_h = int(padded_h)
-        padded_w = int(padded_w)
-        h, w = batch_tensor.shape[-2:]
-        batch_tensor = batch_tensor[..., :h - padded_h, :w - padded_w]
+        if same_de_padding_size:
+            # Do not dissolve batch,
+            # all tensor will be de-padded by a same size
+            # De pad by the first sample
+            padded_h, padded_w = self.padded_sizes[0][-2:]
+            padded_h = int(padded_h)
+            padded_w = int(padded_w)
+            h, w = batch_tensor.shape[-2:]
+            batch_tensor = batch_tensor[..., :h - padded_h, :w - padded_w]
 
-        assert self.norm_input_flag is not None, (
-            'Please kindly run `forward` before running `destructor`')
-        if self.norm_input_flag:
-            batch_tensor *= 255
-        batch_tensor = batch_tensor.clamp_(0, 255)
+            assert self.norm_input_flag is not None, (
+                'Please kindly run `forward` before running `destructor`')
+            if self.norm_input_flag:
+                batch_tensor *= 255
+            batch_tensor = batch_tensor.clamp_(0, 255)
+        else:
+            # Dissolve batch
+            # because each tensor need to be de-padded specifically.
+            batch_tensor_list = []
+
+            h, w = batch_tensor.shape[-2:]
+            for index in range(batch_tensor.shape[0]):
+                padded_h, padded_w = self.padded_sizes[index][-2:]
+                padded_h = int(padded_h)
+                padded_w = int(padded_w)
+                single_tensor = batch_tensor[index,
+                                             ..., :h - padded_h, :w - padded_w]
+                assert self.norm_input_flag is not None, (
+                    'Please kindly run `forward` before running `destructor`')
+                if self.norm_input_flag:
+                    single_tensor *= 255
+                single_tensor = single_tensor.clamp_(0, 255)
+                batch_tensor_list.append(single_tensor)
+
+            batch_tensor = batch_tensor_list
 
         return batch_tensor

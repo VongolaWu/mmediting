@@ -6,6 +6,7 @@ from .cifar10_dataset import CIFAR10
 from .comp1k_dataset import AdobeComp1kDataset
 from .grow_scale_image_dataset import GrowScaleImgDataset
 from .imagenet_dataset import ImageNet
+from .many_to_one_dataset import ManyToOneDataset
 from .paired_image_dataset import PairedImageDataset
 from .paired_multipath_dataset import PairedMultipathDataset
 from .singan_dataset import SinGANDataset
@@ -23,4 +24,5 @@ __all__ = [
     'CIFAR10',
     'GrowScaleImgDataset',
     'SinGANDataset',
+    'ManyToOneDataset',
 ]

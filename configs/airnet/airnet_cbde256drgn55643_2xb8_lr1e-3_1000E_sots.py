@@ -1,6 +1,6 @@
 _base_ = '../_base_/default_runtime.py'
 
-experiment_name = 'airnet'
+experiment_name = 'airnet_dehaze'
 work_dir = f'./work_dirs/{experiment_name}'
 save_dir = './work_dirs/'
 
@@ -69,26 +69,22 @@ train_dataloader = dict(
     num_workers=8,
     batch_size=num_degra,  # gpus 4
     persistent_workers=False,
-    sampler=dict(type='InfiniteSampler', shuffle=True),
+    sampler=dict(type='DefaultSampler', shuffle=True),
     dataset=dict(
         type='PairedMultipathDataset',
         fix_length=400,
         datasets=[
             dict(
-                type=dataset_type,
-                data_root='../datasets/SIDD/train',
-                data_prefix=dict(gt='gt', img='noisy'),
-                filename_tmpl=dict(img='{}_NOISY', gt='{}_GT'),
-                pipeline=train_pipeline),
-            dict(
-                type=dataset_type,
-                data_root='../datasets/RainTrainL',
+                type='ManyToOneDataset',
+                metainfo=dict(dataset_type='Allsets_air', task_name='restore'),
+                data_root='../datasets/Allsets_air/OTS/train',
                 data_prefix=dict(gt='gt', img='input'),
+                search_key='img',
                 pipeline=train_pipeline),
         ]))
 
 val_dataloader = dict(
-    num_workers=4,
+    num_workers=8,
     batch_size=8,
     persistent_workers=False,
     drop_last=False,
@@ -96,7 +92,7 @@ val_dataloader = dict(
     dataset=dict(
         type=dataset_type,
         metainfo=dict(dataset_type='SOTS', task_name='dehaze'),
-        data_root='../datasets/SOTS/outdoor',
+        data_root='../datasets/Allsets_air/OTS/test',
         data_prefix=dict(gt='gt', img='input'),
         pipeline=val_pipeline))
 
@@ -109,7 +105,7 @@ val_evaluator = [
 ]
 test_evaluator = val_evaluator
 
-train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=1000)
+train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=1500, val_interval=100)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
@@ -126,6 +122,8 @@ param_scheduler = [
     dict(type='StepLR', by_epoch=True, step_size=125, gamma=0.5, begin=100)
 ]
 
+log_processor = dict(type='LogProcessor', window_size=100, by_epoch=True)
+
 default_hooks = dict(
     checkpoint=dict(
         type='CheckpointHook',
@@ -133,6 +131,9 @@ default_hooks = dict(
         save_optimizer=True,
         by_epoch=True,
         out_dir=save_dir,
+        max_keep_ckpts=10,
+        save_best='PSNR',
+        rule='greater',
     ),
     timer=dict(type='IterTimerHook'),
     logger=dict(type='LoggerHook', interval=1),

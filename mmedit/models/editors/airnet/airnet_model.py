@@ -5,6 +5,7 @@ from mmengine import MessageHub
 
 from mmedit.models.base_models import BaseEditModel
 from mmedit.registry import MODELS
+from mmedit.structures import EditDataSample, PixelData
 
 
 @MODELS.register_module()
@@ -52,6 +53,32 @@ class AirNetRestorer(BaseEditModel):
         """
         outputs = self.generator(inputs, **kwargs)
         return outputs['restored']
+
+    def forward_inference(self, inputs, data_samples=None, **kwargs):
+        """Forward inference. Returns predictions of validation, testing, and
+        simple inference.
+
+        Args:
+            inputs (torch.Tensor): batch input tensor collated by
+                :attr:`data_preprocessor`.
+            data_samples (List[BaseDataElement], optional):
+                data samples collated by :attr:`data_preprocessor`.
+
+        Returns:
+            List[EditDataSample]: predictions.
+        """
+
+        feats = self.forward_tensor(inputs, data_samples, **kwargs)
+        feats = self.data_preprocessor.destructor(
+            feats, same_de_padding_size=False)
+        predictions = []
+        for idx in range(len(feats)):
+            predictions.append(
+                EditDataSample(
+                    pred_img=PixelData(data=feats[idx].to('cpu')),
+                    metainfo=data_samples[idx].metainfo))
+
+        return predictions
 
     def forward_train(self, inputs, data_samples=None, **kwargs):
         """Forward training. Returns dict of losses of training.
