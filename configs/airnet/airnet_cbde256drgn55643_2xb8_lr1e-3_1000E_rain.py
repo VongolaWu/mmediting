@@ -7,7 +7,7 @@ save_dir = './work_dirs/'
 # model settings
 # number of degradations
 # should be set equal to the number of train datasets
-num_degra = 8
+num_degra = 1
 # in paper, it is 400 * N degradations in each epoch
 # which means 400 batches each epoch
 epoch_image_size = 400 * num_degra
@@ -126,7 +126,7 @@ log_processor = dict(type='LogProcessor', window_size=100, by_epoch=True)
 default_hooks = dict(
     checkpoint=dict(
         type='CheckpointHook',
-        interval=10,
+        interval=50,
         save_optimizer=True,
         by_epoch=True,
         out_dir=save_dir,

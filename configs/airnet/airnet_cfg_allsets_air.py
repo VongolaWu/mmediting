@@ -103,8 +103,8 @@ val_dataloader = dict(
     sampler=dict(type='DefaultSampler', shuffle=False),
     dataset=dict(
         type=dataset_type,
-        metainfo=dict(dataset_type='SOTS', task_name='dehaze'),
-        data_root='../datasets/SOTS/outdoor',
+        metainfo=dict(dataset_type='Allsets_air', task_name='restore'),
+        data_root='../datasets/Allsets_air/RainL/test',
         data_prefix=dict(gt='gt', img='input'),
         pipeline=val_pipeline))
 
