@@ -7,7 +7,7 @@ save_dir = './work_dirs/'
 # model settings
 # number of degradations
 # should be set equal to the number of train datasets
-num_degra = 3 * 4
+num_degra = 5
 # in paper, it is 400 * N degradations in each epoch
 # which means 400 batches each epoch
 epoch_image_size = 400 * num_degra
@@ -56,9 +56,78 @@ train_pipeline = [
     dict(type='PackEditInputs')
 ]
 
+noise_train_pipeline1 = [
+    dict(type='LoadImageFromFile', key='gt', channel_order='rgb'),
+    dict(
+        type='AddNoise', keys=['gt'], after_key_dict=dict(gt='img'), sigma=15),
+    dict(type='FixedCrop', keys=['img', 'gt'], crop_size=(256, 256)),
+    dict(
+        type='Flip',
+        keys=['img', 'gt'],
+        flip_ratio=0.5,
+        direction='horizontal'),
+    dict(
+        type='Flip', keys=['img', 'gt'], flip_ratio=0.5, direction='vertical'),
+    dict(type='RandomTransposeHW', keys=['img', 'gt'], transpose_ratio=0.5),
+    dict(type='PackEditInputs')
+]
+
+noise_train_pipeline2 = [
+    dict(type='LoadImageFromFile', key='gt', channel_order='rgb'),
+    dict(
+        type='AddNoise', keys=['gt'], after_key_dict=dict(gt='img'), sigma=25),
+    dict(type='FixedCrop', keys=['img', 'gt'], crop_size=(256, 256)),
+    dict(
+        type='Flip',
+        keys=['img', 'gt'],
+        flip_ratio=0.5,
+        direction='horizontal'),
+    dict(
+        type='Flip', keys=['img', 'gt'], flip_ratio=0.5, direction='vertical'),
+    dict(type='RandomTransposeHW', keys=['img', 'gt'], transpose_ratio=0.5),
+    dict(type='PackEditInputs')
+]
+
+noise_train_pipeline3 = [
+    dict(type='LoadImageFromFile', key='gt', channel_order='rgb'),
+    dict(
+        type='AddNoise', keys=['gt'], after_key_dict=dict(gt='img'), sigma=50),
+    dict(type='FixedCrop', keys=['img', 'gt'], crop_size=(256, 256)),
+    dict(
+        type='Flip',
+        keys=['img', 'gt'],
+        flip_ratio=0.5,
+        direction='horizontal'),
+    dict(
+        type='Flip', keys=['img', 'gt'], flip_ratio=0.5, direction='vertical'),
+    dict(type='RandomTransposeHW', keys=['img', 'gt'], transpose_ratio=0.5),
+    dict(type='PackEditInputs')
+]
+
 val_pipeline = [
     dict(type='LoadImageFromFile', key='img', channel_order='rgb'),
     dict(type='LoadImageFromFile', key='gt', channel_order='rgb'),
+    dict(type='PackEditInputs')
+]
+
+noise_val_pipeline1 = [
+    dict(type='LoadImageFromFile', key='gt', channel_order='rgb'),
+    dict(
+        type='AddNoise', keys=['gt'], after_key_dict=dict(gt='img'), sigma=15),
+    dict(type='PackEditInputs')
+]
+
+noise_val_pipeline2 = [
+    dict(type='LoadImageFromFile', key='gt', channel_order='rgb'),
+    dict(
+        type='AddNoise', keys=['gt'], after_key_dict=dict(gt='img'), sigma=25),
+    dict(type='PackEditInputs')
+]
+
+noise_val_pipeline3 = [
+    dict(type='LoadImageFromFile', key='gt', channel_order='rgb'),
+    dict(
+        type='AddNoise', keys=['gt'], after_key_dict=dict(gt='img'), sigma=50),
     dict(type='PackEditInputs')
 ]
 
@@ -75,11 +144,20 @@ train_dataloader = dict(
         fix_length=400,
         datasets=[
             dict(
-                type=dataset_type,
                 metainfo=dict(dataset_type='Allsets_air', task_name='restore'),
-                data_root='../datasets/Allsets_air/SIDD/train',
-                data_prefix=dict(gt='gt', img='input'),
-                pipeline=train_pipeline),
+                data_root='../datasets/Clearset/train',
+                data_prefix=dict(gt=''),
+                pipeline=noise_train_pipeline1),
+            dict(
+                metainfo=dict(dataset_type='Allsets_air', task_name='restore'),
+                data_root='../datasets/Clearset/train',
+                data_prefix=dict(gt=''),
+                pipeline=noise_train_pipeline2),
+            dict(
+                metainfo=dict(dataset_type='Allsets_air', task_name='restore'),
+                data_root='../datasets/Clearset/train',
+                data_prefix=dict(gt=''),
+                pipeline=noise_train_pipeline3),
             dict(
                 type='ManyToOneDataset',
                 metainfo=dict(dataset_type='Allsets_air', task_name='restore'),
@@ -139,7 +217,7 @@ log_processor = dict(type='LogProcessor', window_size=100, by_epoch=True)
 default_hooks = dict(
     checkpoint=dict(
         type='CheckpointHook',
-        interval=10,
+        interval=50,
         save_optimizer=True,
         by_epoch=True,
         out_dir=save_dir,
