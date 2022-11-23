@@ -1,6 +1,6 @@
 _base_ = '../_base_/default_runtime.py'
 
-experiment_name = 'airnet_derain'
+experiment_name = 'airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_rain'
 work_dir = f'./work_dirs/{experiment_name}'
 save_dir = './work_dirs/'
 
@@ -67,7 +67,7 @@ dataset_type = 'BasicImageDataset'
 
 train_dataloader = dict(
     num_workers=8,
-    batch_size=num_degra,  # gpus 4
+    batch_size=16,  # gpus 4
     persistent_workers=False,
     sampler=dict(type='DefaultSampler', shuffle=True),
     dataset=dict(
@@ -84,7 +84,7 @@ train_dataloader = dict(
 
 val_dataloader = dict(
     num_workers=8,
-    batch_size=8,
+    batch_size=16,
     persistent_workers=False,
     drop_last=False,
     sampler=dict(type='DefaultSampler', shuffle=False),
