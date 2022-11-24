@@ -1,6 +1,6 @@
 _base_ = '../_base_/default_runtime.py'
 
-experiment_name = 'airnet'
+experiment_name = 'airnet_cfg_allsets_air'
 work_dir = f'./work_dirs/{experiment_name}'
 save_dir = './work_dirs/'
 
@@ -144,16 +144,19 @@ train_dataloader = dict(
         fix_length=400,
         datasets=[
             dict(
+                type=dataset_type,
                 metainfo=dict(dataset_type='Allsets_air', task_name='restore'),
                 data_root='../datasets/Clearset/train',
                 data_prefix=dict(gt=''),
                 pipeline=noise_train_pipeline1),
             dict(
+                type=dataset_type,
                 metainfo=dict(dataset_type='Allsets_air', task_name='restore'),
                 data_root='../datasets/Clearset/train',
                 data_prefix=dict(gt=''),
                 pipeline=noise_train_pipeline2),
             dict(
+                type=dataset_type,
                 metainfo=dict(dataset_type='Allsets_air', task_name='restore'),
                 data_root='../datasets/Clearset/train',
                 data_prefix=dict(gt=''),
