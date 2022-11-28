@@ -12,7 +12,7 @@ class AddNoise(BaseTransform):
 
     Args:
         keys (Sequence[str]): The images to be cropped.
-        after_key (dict[str]): the corresponding new keys
+        after_key_dict (dict[str]): the corresponding new keys
         sigma (int): Added noise sigma.
     """
 
@@ -40,13 +40,13 @@ class AddNoise(BaseTransform):
         for k in self.keys:
             noisy_data = self._add_gaussian_noise(results[k], self.sigma)
             results[self.after_key_dict[k]] = noisy_data
-        results['noise_sigmna'] = self.sigma
+        results['noise_sigma'] = self.sigma
         return results
 
     def __repr__(self):
 
         repr_str = self.__class__.__name__
-        repr_str += (f'keys={self.keys}, '
+        repr_str += (f', keys={self.keys}, '
                      f'sigma={self.sigma}, '
                      f'after_key_dict={self.after_key_dict}')
 

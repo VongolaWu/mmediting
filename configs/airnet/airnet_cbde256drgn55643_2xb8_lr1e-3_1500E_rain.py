@@ -8,9 +8,6 @@ save_dir = './work_dirs/'
 # number of degradations
 # should be set equal to the number of train datasets
 num_degra = 1
-# in paper, it is 400 * N degradations in each epoch
-# which means 400 batches each epoch
-epoch_image_size = 400 * num_degra
 
 model = dict(
     type='AirNetRestorer',
@@ -67,7 +64,7 @@ dataset_type = 'BasicImageDataset'
 
 train_dataloader = dict(
     num_workers=8,
-    batch_size=16,  # gpus 4
+    batch_size=num_degra,  # gpus 4
     persistent_workers=False,
     sampler=dict(type='DefaultSampler', shuffle=True),
     dataset=dict(
@@ -84,7 +81,7 @@ train_dataloader = dict(
 
 val_dataloader = dict(
     num_workers=8,
-    batch_size=16,
+    batch_size=1,
     persistent_workers=False,
     drop_last=False,
     sampler=dict(type='DefaultSampler', shuffle=False),

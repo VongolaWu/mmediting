@@ -1,0 +1,53 @@
+Collections:
+- Metadata:
+    Architecture:
+    - AirNet
+  Name: AirNet
+  Paper:
+  - https://openaccess.thecvf.com/content/CVPR2022/papers/Li_All-in-One_Image_Restoration_for_Unknown_Corruption_CVPR_2022_paper.pdf
+  README: configs/airnet/README.md
+Models:
+- Config: configs/airnet/airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_rain.py
+  In Collection: AirNet
+  Metadata:
+    GPUs: 1 (A100)
+    Training Data: Others
+  Name: airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_rain
+  Results:
+  - Dataset: Others
+    Metrics: {}
+    Task: Airnet
+  Weights: <>
+- Config: configs/airnet/airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_rain.py
+  In Collection: AirNet
+  Metadata:
+    GPUs: 1 (A100)
+    Training Data: Others
+  Name: airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_rain
+  Results:
+  - Dataset: Others
+    Metrics: {}
+    Task: Airnet
+  Weights: <>
+- Config: configs/airnet/airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_sots.py
+  In Collection: AirNet
+  Metadata:
+    GPUs: 1 (A100)
+    Training Data: Others
+  Name: airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_sots
+  Results:
+  - Dataset: Others
+    Metrics: {}
+    Task: Airnet
+  Weights: <>
+- Config: configs/airnet/airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_sots.py
+  In Collection: AirNet
+  Metadata:
+    GPUs: 1 (A100)
+    Training Data: Others
+  Name: airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_sots
+  Results:
+  - Dataset: Others
+    Metrics: {}
+    Task: Airnet
+  Weights: <>

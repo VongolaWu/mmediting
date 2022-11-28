@@ -1,13 +1,13 @@
 _base_ = '../_base_/default_runtime.py'
 
-experiment_name = 'airnet_dehaze'
+experiment_name = 'airnet_cbde256drgn55643_2xb8_lr1e-3_1500E_sots'
 work_dir = f'./work_dirs/{experiment_name}'
 save_dir = './work_dirs/'
 
 # model settings
 # number of degradations
 # should be set equal to the number of train datasets
-num_degra = 8
+num_degra = 1
 # in paper, it is 400 * N degradations in each epoch
 # which means 400 batches each epoch
 epoch_image_size = 400 * num_degra
@@ -85,7 +85,7 @@ train_dataloader = dict(
 
 val_dataloader = dict(
     num_workers=8,
-    batch_size=8,
+    batch_size=1,
     persistent_workers=False,
     drop_last=False,
     sampler=dict(type='DefaultSampler', shuffle=False),
