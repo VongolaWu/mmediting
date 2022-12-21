@@ -59,26 +59,29 @@ val_pipeline = [
 ]
 
 # dataset settings
-dataset_type = 'BasicImageDataset'
+train_dataset_type = 'MultipleFramesDataset'
 val_dataset_type = 'MultipleFramesDataset'
-data_root = '/mnt/petrelfs/wubohuai/research/datasets/gopro/'
+data_root = '../datasets/Adobe240fps/'
 
 train_dataloader = dict(
     num_workers=8,
-    batch_size=8,  # gpus 4
+    batch_size=8,  # 8 gpu
     persistent_workers=False,
-    sampler=dict(type='InfiniteSampler', shuffle=True),
+    drop_last=False,
+    sampler=dict(type='DefaultSampler', shuffle=False),
     dataset=dict(
-        type=dataset_type,
-        metainfo=dict(dataset_type='gopro', task_name='deblur'),
-        data_root='/mnt/petrelfs/share_data/wubohuai/datasets/gopro/train',
-        data_prefix=dict(gt='sharp', img='blur'),
-        ann_file='meta_info_gopro_train.txt',
-        pipeline=train_pipeline))
+        type=train_dataset_type,
+        metainfo=dict(dataset_type='gopro', task_name='mfi'),
+        data_root=data_root + 'test',
+        data_prefix=dict(img='full_sharp', gt='full_sharp'),
+        pipeline=val_pipeline,
+        depth=2,
+        num_overlapped=0,
+        load_frames_list=dict(img=[0, 1, 2, 3, 4, 5, 6, 7], gt=[4])))
 
 val_dataloader = dict(
     num_workers=8,
-    batch_size=1,  # 8 gpu
+    batch_size=4,  # 8 gpu
     persistent_workers=False,
     drop_last=False,
     sampler=dict(type='DefaultSampler', shuffle=False),
@@ -86,11 +89,11 @@ val_dataloader = dict(
         type=val_dataset_type,
         metainfo=dict(dataset_type='gopro', task_name='mfi'),
         data_root=data_root + 'test',
-        data_prefix=dict(img='sharp', gt='sharp'),
+        data_prefix=dict(img='full_sharp', gt='full_sharp'),
         pipeline=val_pipeline,
         depth=2,
         num_overlapped=0,
-        load_frames_list=dict(img=[0, 1, 2, 3, 4, 5, 6, 7], gt=[4])))
+        load_frames_list=dict(img=[0, 1, 2, 3, 4, 5, 6], gt=[3])))
 
 test_dataloader = val_dataloader
 
@@ -124,7 +127,7 @@ default_hooks = dict(
         out_dir=save_dir,
     ),
     timer=dict(type='IterTimerHook'),
-    logger=dict(type='LoggerHook', interval=100),
+    logger=dict(type='LoggerHook', interval=10),
     param_scheduler=dict(type='ParamSchedulerHook'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
 )

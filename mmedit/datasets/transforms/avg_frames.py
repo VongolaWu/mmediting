@@ -28,10 +28,8 @@ class AvgFrames(BaseTransform):
             dict: A dict containing the processed data and information.
         """
         for key in self.keys:
-            import ipdb
-            ipdb.set_trace()
             results[f'orig_{key}'] = results[key]
-            results[key] = np.asarray(results[key]).mean(0)
+            results[key] = np.asarray(results[key]).mean(0).astype(np.float32)
 
         return results
 
