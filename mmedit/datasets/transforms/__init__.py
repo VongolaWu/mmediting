@@ -5,6 +5,7 @@ from .aug_pixel import (BinarizeImage, Clip, ColorJitter, RandomAffine,
                         RandomMaskDilation, UnsharpMasking)
 from .aug_shape import (Flip, NumpyPad, RandomRotation, RandomTransposeHW,
                         Resize)
+from .avg_frames import AvgFrames
 from .crop import (CenterCropLongEdge, Crop, CropAroundCenter, CropAroundFg,
                    CropAroundUnknown, CropLike, FixedCrop, InstanceCrop,
                    ModCrop, PairedRandomCrop, RandomCropLongEdge,
@@ -46,5 +47,6 @@ __all__ = [
     'GenerateSoftSeg', 'FormatTrimap', 'TransformTrimap', 'GenerateTrimap',
     'GenerateTrimapWithDistTransform', 'CompositeFg', 'RandomLoadResizeBg',
     'MergeFgAndBg', 'PerturbBg', 'RandomJitter', 'LoadPairedImageFromFile',
-    'CenterCropLongEdge', 'RandomCropLongEdge', 'NumpyPad', 'InstanceCrop'
+    'CenterCropLongEdge', 'RandomCropLongEdge', 'NumpyPad', 'InstanceCrop',
+    'AvgFrames'
 ]
