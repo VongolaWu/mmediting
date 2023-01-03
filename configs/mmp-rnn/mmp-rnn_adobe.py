@@ -24,8 +24,8 @@ model = dict(
     test_cfg=dict(),
     data_preprocessor=dict(
         type='EditDataPreprocessor',
-        mean=[0., 0., 0.],
-        std=[255., 255., 255.],
+        mean=[127.5],
+        std=[255.],
     ))
 
 train_pipeline = [
@@ -123,6 +123,7 @@ default_hooks = dict(
     sampler_seed=dict(type='DistSamplerSeedHook'),
 )
 
-visualizer = dict(img_keys=['input', 'gt_img', 'pred_img'], fn_key='key', bgr2rgb=True)
+visualizer = dict(
+    img_keys=['input', 'gt_img', 'pred_img'], fn_key='key', bgr2rgb=True)
 
 randomness = dict(seed=10, diff_rank_seed=True)
